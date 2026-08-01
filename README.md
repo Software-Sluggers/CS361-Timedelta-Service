@@ -98,13 +98,21 @@ sequenceDiagram
     participant build_summary
 
     Client->>create_timedelta: GET /timedelta
+    activate create_timedelta
     create_timedelta->>apply_timedelta: apply_timedelta(timestamp, value, unit)
+    activate apply_timedelta
     apply_timedelta->>format_timestamp: format_timestamp(resulting)
+    activate format_timestamp
     format_timestamp-->>apply_timedelta: ResultingTimestamp
+    deactivate format_timestamp
     apply_timedelta->>build_summary: build_summary(value, unit, timestamps)
+    activate build_summary
     build_summary-->>apply_timedelta: Summary
+    deactivate build_summary
     apply_timedelta-->>create_timedelta: TimedeltaResponse
+    deactivate apply_timedelta
     create_timedelta-->>Client: 200 OK (TimedeltaResponse)
+    deactivate create_timedelta
 ```
 
 **Invalid request:**
@@ -115,7 +123,9 @@ sequenceDiagram
     participant handle_request_validation_error
 
     Client->>handle_request_validation_error: GET /timedelta (invalid params)
+    activate handle_request_validation_error
     handle_request_validation_error-->>Client: 400 Bad Request
+    deactivate handle_request_validation_error
 ```
 
 ## Testing
