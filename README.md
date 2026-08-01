@@ -68,6 +68,24 @@ On a successful request, the service returns 200 OK and the values from the orig
 }
 ```
 
+**Example request and response (Python):**
+
+```python
+import requests
+
+timestamp = "2026-01-01T00:00:00.000Z"
+operation = "add"
+value = 3
+units = "days"
+url = f"http://localhost:5000/timedelta?timestamp={timestamp}&operation={add}&value={value}&units={units}"
+
+# Send the request
+payload = requests.get(url, json=payload)
+
+# Print the response
+print(payload["ResultingTimestamp"])
+```
+
 **Error response:**
 
 On an invalid request, the service returns 400 Bad Request and an error message:
