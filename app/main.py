@@ -46,6 +46,20 @@ class TimedeltaResponse(BaseModel):
     Summary: str
 
 
+def get_validation_error_message(
+    exception: RequestValidationError,
+) -> str:
+    """Return the appropriate message for a validation error."""
+
+    for error in exception.errors():
+        location = error.get("loc", ())
+        for field, message in ERROR_MESSAGES.items():
+            if field in location:
+                return message
+
+    return "Invalid request."
+
+
 @app.exception_handler(RequestValidationError)
 async def handle_request_validation_error(
     _request: Request,
@@ -53,18 +67,9 @@ async def handle_request_validation_error(
 ) -> JSONResponse:
     """Return a readable response for invalid timedelta requests."""
 
-    for error in exception.errors():
-        location = error.get("loc", ())
-        for field, message in ERROR_MESSAGES.items():
-            if field in location:
-                return JSONResponse(
-                    status_code=400,
-                    content={"Error": message},
-                )
-
     return JSONResponse(
         status_code=400,
-        content={"Error": "Invalid request."},
+        content={"Error": get_validation_error_message(exception)},
     )
 
 
